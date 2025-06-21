@@ -2,6 +2,7 @@
 
 # 이미지 증강 프로세스
 1. 이미지 전처리
+
 1.1 결함종류, rotation별로 직접 디렉토리 구분
 dent, nick, scratch
 rotation1 ~ rotation8
@@ -21,7 +22,7 @@ rename_labels.ipynb
 2. 이미지 생성
 2.1 찍힘 이미지 생성
 
-1) 모듈 종류(front1, main), rotation별로 결함 위치에 대해 crop
+2.1.1 모듈 종류(front1, main), rotation별로 결함 위치에 대해 crop
 정상이미지도 같은 방식으로 crop 진행
 정상이미지는 trainA, 결함이미지는 trainB에 저장
 
@@ -54,32 +55,32 @@ rotation1(370, 570, 50)
 rotation2(370, 520, 50)
 rotation3(430, 430, 50)
 
-2) trainA, trainB를 복사하여 testA, testB 디렉토리를 생성
+2.1.2 trainA, trainB를 복사하여 testA, testB 디렉토리를 생성
 %cd /content/drive/MyDrive/dataset/CUT_dataset/front1_nick_rotation1_CUT
 %cp trainA testA -r
 %cp trainB testB -r
 
-3) 생성된 trainA, trainB 디렉토리 파일들을 모듈별로 통합하여 train데이터셋 준비
+2.1.3 생성된 trainA, trainB 디렉토리 파일들을 모듈별로 통합하여 train데이터셋 준비
 %mkdir -p /content/drive/MyDrive/dataset/CUT_dataset/front1_nick_CUT/trainA
 %mkdir -p /content/drive/MyDrive/dataset/CUT_dataset/front1_nick_CUT/trainB
 %cd /content/drive/MyDrive/dataset/CUT_dataset/front1_nick_rotation1_CUT
 %cp trainA/* ../front1_nick_CUT/trainA
 %cp trainB/* ../front1_nick_CUT/trainB
 
-4) 준비된 데이터셋으로 CUT모델 학습
+2.1.4 준비된 데이터셋으로 CUT모델 학습
 CUT.ipynb
 !python train.py --dataroot /content/drive/MyDrive/dataset/CUT_dataset/front1_nick_CUT \
                  --name /content/drive/MyDrive/result/front1_nick_CUT_result \
                  --CUT_mode CUT
 
-5) 학습된 모델로 각 모듈, rotation에 대해 이미지 생성
+2.1.5 학습된 모델로 각 모듈, rotation에 대해 이미지 생성
 !python test.py \
   --dataroot /content/drive/MyDrive/dataset/CUT_dataset/front1_nick_rotation1_CUT \
   --name /content/drive/MyDrive/result/front1_nick_CUT_reusult \
   --model cut \
   --num_test 100
 
-6) 생성된 이미지를 정상 이미지에 다시 붙여넣기
+2.1.6 생성된 이미지를 정상 이미지에 다시 붙여넣기
 crop&paste_images.ipynb
 background_dir(정상 이미지 디렉토리)
 "/content/drive/MyDrive/dataset/atm_dataset_1024x1024/front1/rotation1” 
@@ -91,16 +92,16 @@ output_dir(저장할 디렉토리)
 
 2.2 스크래치 이미지 생성
 
-1) 라벨링 파일 기준으로 결함 부분만 crop
+2.2.1 라벨링 파일 기준으로 결함 부분만 crop
 crop_boundingbox.ipynb
 image_dir = "/content/drive/MyDrive/dataset/atm_dataset"
 label_dir = "/content/drive/MyDrive/dataset/labels"
 output_root = "/content/drive/MyDrive/dataset/cropped_defects"
 
-2) resize to 128x128
+2.2.2 resize to 128x128
 resize_images.ipynb
 
-3) StyleGAN3 모델 학습
+2.2.3 StyleGAN3 모델 학습
 SytleGAN3.ipynb
 !python train.py --outdir=/content/drive/MyDrive/result/scratch_128x128_StyleGAN3_training-runs \
             --data=/content/drive/MyDrive/dataset/cropped_defects/scratch_128x128 \
@@ -115,7 +116,7 @@ SytleGAN3.ipynb
             --resume=/content/drive/MyDrive/result/scratch_128x128_StyleGAN3_training-runs/00000-stylegan3-t-scratch_128x128-gpus1-batch32-gamma0.5/network-snapshot-001800.pkl
 
 
-4) 학습된 모델로 이미지 생성
+2.2.4 학습된 모델로 이미지 생성
 SytleGAN3.ipynb
 !python gen_images.py \
   --outdir=/content/drive/MyDrive/result/scratch_128x128_StyleGAN3_result \
@@ -124,7 +125,7 @@ SytleGAN3.ipynb
   --noise-mode=random \
   --network=/content/drive/MyDrive/result/scratch_128x128_StyleGAN3_training-runs/00000-stylegan3-t-scratch_128x128-gpus1-batch32-gamma0.5/network-snapshot-001800.pkl
 
-5) 결함 이미지 boundingbox에 다시 붙여넣기
+2.2.5 결함 이미지 boundingbox에 다시 붙여넣기
 paste_to_boundingbox.ipynb
 
 
