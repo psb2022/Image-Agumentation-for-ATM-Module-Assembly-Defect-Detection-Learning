@@ -1,5 +1,6 @@
 # Image-Agumentation-for-ATM-Module-Assembly-Defect-Detection-Learning
 
+# 이미지 증강 프로세스
 1. 이미지 전처리
 1.1 결함종류, rotation별로 직접 디렉토리 구분
 dent, nick, scratch
